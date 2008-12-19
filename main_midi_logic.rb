@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'midilib'
 require 'scales_mod'
-require 'chord_progressions'
+#require 'chord_progressions'
 
 class TimedTrack < MIDI::Track
 MIDDLE_C = 60
