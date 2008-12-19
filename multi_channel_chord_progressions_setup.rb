@@ -14,7 +14,7 @@
 require 'rubygems'
 require 'midilib'
 require 'main_midi_logic'
-require 'scales_mod'
+require 'scales'
 
 duration=["whole","half","quarter"]# ,"8th","16th","32nd","64th"]
 
