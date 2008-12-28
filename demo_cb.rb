@@ -15,7 +15,6 @@ def play_chord(midi_object,chord,channel,duration,velocity)
   }
 end
 
-
 midi = LiveMIDI.new 
  
 chan=rand(8)
