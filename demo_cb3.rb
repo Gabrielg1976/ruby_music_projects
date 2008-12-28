@@ -56,7 +56,7 @@ part_b = [1,3,6,9,5,7,2,5]
 ending = [8,4,1,7,8]
 prog = intro + part_a + part_a + part_b + part_a + ending
 
-puts "play the progression with a maj7_chord"
+puts "play the progression with a major_chord"
 test_drive_progression(midi,Note.new("C"), :major_scale, :major_chord,prog,1)
 sleep(1)
 puts "and now again, with maj7_chord"
