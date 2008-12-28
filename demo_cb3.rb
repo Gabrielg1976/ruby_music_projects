@@ -36,11 +36,30 @@ def test_drive(midi_object,root_note,scale,chord,duration = 1)
   #FIXME: not sure why the last_chord seems to sustain for a longer time
 end
 
+
+
+def test_drive_progression(midi_object,root_note,scale,chord,progression,duration = 1)
+  chan=rand(8)
+  chords = progression.map{|deg|
+    root_note.send(scale).harmonized_chord(deg,chord)
+  }    
+  chords.each{|chord|
+    play_chord(midi_object,chord,chan,duration,rand(75)+25)
+  }
+end
+
 midi = LiveMIDI.new 
  
-test_drive(midi,Note.new("C"), :major_scale, :maj7_chord,0.2)
-test_drive(midi,Note.new("C"), :phrygian_scale, :min7_chord,0.2)
-test_drive(midi,Note.new("C"), :enigmatic_scale, :aug_chord,0.2)
-test_drive(midi,Note.new("C"), :hangman_scale, :minor_chord,0.2)
+intro = [1,4,5,8]
+part_a = [8,4,8,4,9,7,2,5]
+part_b = [1,3,6,9,5,7,2,5]
+ending = [8,4,1,7,8]
+prog = intro + part_a + part_a + part_b + part_a + ending
+
+puts "play the progression with a maj7_chord"
+test_drive_progression(midi,Note.new("C"), :major_scale, :major_chord,prog,1)
+sleep(1)
+puts "and now again, with maj7_chord"
+test_drive_progression(midi,Note.new("C"), :major_scale, :maj7_chord,prog,1)
 
 puts "The Composition is Finished"
