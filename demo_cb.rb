@@ -62,6 +62,6 @@ prog = intro + part_a + part_a + part_b + part_a + ending
 #test_drive_chord(midi,Note.new("C"), :phrygian_scale, :min7_chord, prog, 0.4)
 #test_drive_chord(midi,Note.new("C"), :enigmatic_scale, :aug_chord, prog, 0.4)
 #test_drive_chord(midi,Note.new("C"), :hangman_scale, :minor_chord, prog, 0.4)
-test_drive_arpeggio(midi,Note.new(48), :major_scale, :add2_chord, prog, 0.2)
+test_drive_arpeggio(midi,Note.new("Bb"), :major_scale, :add2_chord, prog, 0.8)
 
 puts "The Composition is Finished"
