@@ -54,17 +54,20 @@ class Field
   attr_reader :cell_size, :offset
   attr_accessor :midi, :root_note, :scale, :chord, :progression, :duration
   
-  def initialize(app, level = :beginner)
-    @app = app
+  def initialize(app, level, opts = {})
+
+  @app = app
 	@root_note = Note.new("C")
-	@scale = :major_scale
+	@scale = opts[:scale]
 	@chord = :major_chord
 	@progression = [1,2,3,4,5,6,7,8]
 	@duration = 1
-	@midi = MIDIator::Interface.new
+	@midi = opts[:midi]
   @midi.autodetect_driver
-  @timer = MIDIator::Timer.new(0.0147)
+  @timer = opts[:timer] 
 	@channel = 0
+	#level = opts[:level]
+	
     @field = []
     @w, @h, @bombs = LEVELS[level][0], LEVELS[level][1], LEVELS[level][2]
     @h.times { @field << Array.new(@w) { EmptyCell.new } }
@@ -337,8 +340,11 @@ class Field
     cell_exists?(x, y) ? @field[y][x] = v : false
   end
 end
+Shoes.app(
+  :width => 730, 
+  :height => 550, 
+  :title => 'Shoes MPC-0') do
 
-Shoes.app :width => 730, :height => 550, :title => 'Minesweeper' do
   def render_field
 	clear do
       background rgb(50, 50, 90, 0.7)	   	  
@@ -349,7 +355,17 @@ Shoes.app :width => 730, :height => 550, :title => 'Minesweeper' do
   end
   
   def new_game level
-    @field = Field.new self, level
+    
+    @midi = MIDIator::Interface.new
+    @timer = MIDIator::Timer.new(0.0147)
+    @scale = Note.new("C").major_scale
+    @degree = 1
+    @field = Field.new self, level, :midi => @midi, :timer => @timer, :scale => @scale    
+    
+
+    #:level => self.level, :timer => self.timer, :midi => self.midi, :scale => self.scale
+
+
     translate -@old_offset.first, -@old_offset.last unless @old_offset.nil?
     translate @field.offset.first, @field.offset.last
     @old_offset = @field.offset
@@ -358,7 +374,99 @@ Shoes.app :width => 730, :height => 550, :title => 'Minesweeper' do
   
   new_game :beginner
   #animate(5) { @status.replace "Time: #{@field.total_time.to_i} Bombs left: #{@field.bombs_left}" }
-  
+  str = ''
+  player = lambda { |notes|
+    lambda { 
+      @timer.at(lambda{Time.now.to_f}[]) { @midi.play notes }
+    }[]
+  }
+
+  keypress do |k|
+      
+    case k
+    when "0".."9"
+      @degree = k.to_i
+      if @degree == 0
+        @degree = 10
+      end
+      player[@scale.degree(@degree).value]
+    
+    when '['
+      @scale = Scale.new(@scale.root_note - 1,@scale.intervals)
+    when ']'
+      @scale = Scale.new(@scale.root_note + 1,@scale.intervals)
+    when '-'
+      @scale = Scale.new(@scale.root_note - 12,@scale.intervals)
+    when '='
+      @scale = Scale.new(@scale.root_note + 12,@scale.intervals)
+    when 'q'
+      @note = @scale.degree(1).value + 1
+      player[@note]
+    when 'w'
+      @note = @scale.degree(2).value + 1
+      player[@note]
+    when 'e'
+      @note = @scale.degree(3).value + 1
+      player[@note]
+    when 'r'
+      @note = @scale.degree(4).value + 1
+      player[@note]
+    when 't'
+      @note = @scale.degree(5).value + 1
+      player[@note]
+    when 'y'
+      @note = @scale.degree(6).value + 1
+      player[@note]
+    when 'u'
+      @note = @scale.degree(7).value + 1
+      player[@note]
+    when 'i'
+      @note = @scale.degree(8).value + 1
+      player[@note]
+    when 'o'
+      @note = @scale.degree(9).value + 1
+      player[@note]
+    when 'p'
+      @note = @scale.degree(10).value + 1
+      player[@note]
+
+    when "b"  #harmonize a triad on whatever degree, the cheater button
+      @notes = [2,4].map{|n| @scale.degree(@degree+n).value}
+      player[@notes]
+    when "m" #major = 0,4,7          
+      @notes = [4,7].map{|n| @scale.degree(@degree).value + n }
+      player[@notes]
+    when "n"  #minor = 0,3,7          
+      @notes = [3,7].map{|n| @scale.degree(@degree).value + n }
+      player[@notes]
+    when "," #diminished = 0,3,6          
+      @notes = [3,6].map{|n| @scale.degree(@degree).value + n }
+      player[@notes]
+    when "." #augmented = 0,4,8          
+      @notes = [4,8].map{|n| @scale.degree(@degree).value + n }
+      player[@notes]
+    when "j" #harmonized 7th off the degree
+      @note = @scale.degree(@degree+6).value
+      player[@note]
+    when "k" #harmonized 9th off the degree
+      @note = @scale.degree(@degree+8).value
+      player[@note]
+    when "l" #harmonized 11th off the degree
+      @note = @scale.degree(@degree+10).value
+      player[@note]
+    when ";" #harmonized 13th off the degree
+      @note = @scale.degree(@degree+12).value
+      player[@note]
+      #alert offset
+      
+      #@timer.at(Time.now.to_f) { @midi.play @scale.degree(@degree +2).value }
+      #@timer.at(Time.now.to_f) { @midi.play @scale.degree(@degree +4).value }
+      #@timer.at(Time.now.to_f) { @notes.each{|n| @midi.driver.note_on(0,n,100) } }
+      #@timer.at(Time.now.to_f + 1) { @notes.each{|n| @midi.driver.note_off(0,n,0) } }
+      
+    end #case
+  end #keypress do
+
   click do |button, x, y|
     next if @field.game_over? || @field.all_found?
     fx, fy = ((x-@field.offset.first) / @field.cell_size).to_i, ((y-@field.offset.last) / @field.cell_size).to_i
