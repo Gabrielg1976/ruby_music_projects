@@ -38,10 +38,7 @@ class Array
       end
     end
     
-    
-    
-    
-    # Main Menu of a standalone Text_2_midi Converter 
+     # Main Menu of a standalone Text_2_midi Converter 
     puts "Text_2_Midi Converter "
     puts "1 = User input"
     puts "2 = reads in for a text file"
