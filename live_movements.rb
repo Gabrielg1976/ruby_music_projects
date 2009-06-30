@@ -22,7 +22,7 @@ midi = LiveMIDI.new
 
 m_1 = Proc.new {
   64.times {
-  midi.note_on(ch=rand(3),nt=major[rand(major.length)],vlc=rand(75)+25)
+  midi.note_on(ch=sect_1[rand(sect_1.size)],nt=major[rand(major.length)],vlc=rand(75)+25)
   puts "#{nt}"
   sleep(rand(3)) # = 1 second of time 60 = minute
   midi.note_off(ch,nt,0) }
