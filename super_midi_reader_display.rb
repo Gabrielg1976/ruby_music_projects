@@ -15,9 +15,9 @@ def song_creator_and_display
  seq = MIDI::Sequence.new()
   s=[ ]
  100.times {|n| s << lydian_min[rand(lydian_min.size)] }
- s.to_midi("new_song.mid")
+ s.to_midi("new_song1.mid")
 # Then takes the new generated midi file and maps out the notes and time 
- File.open("new_song.mid", 'rb') { | file | seq.read(file) }
+ File.open("new_song1.mid", 'rb') { | file | seq.read(file) }
  measures = seq.get_measures 
  count=0  
   seq.each { | track |
