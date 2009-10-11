@@ -7,7 +7,6 @@ def note_plotter
  seq = MIDI::Sequence.new()
  # Asks the user for midi tarck to read in.. 
  title=gets.chomp!
- 
  File.open("#{title}", 'rb') { | file | seq.read(file) }
  measures = seq.get_measures 
  count=0  
@@ -22,3 +21,5 @@ def note_plotter
    }
  }
 end
+
+note_plotter
