@@ -5,6 +5,12 @@ require 'midilib/sequence'
 require 'rubymusicengine'
 require 'scales'
 
+=begin
+This application generates a simple random midi file and then outputs the notes generated and 
+at what time it did each note 
+=end
+
+
 def song_creator_and_display
  seq = MIDI::Sequence.new()
   s=[ ]
